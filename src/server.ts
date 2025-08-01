@@ -30,7 +30,7 @@ const port = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());
-app.use(cors({ origin: [`http://localhost:${port}`, `https://${process.env.WEBAPP_DOMAIN}`], credentials: true }));
+app.use(cors({ origin: [`http://localhost:${port}`, `https://${process.env.HOST}`], credentials: true }));
 
 //create logger
 const loggerFactory = new LoggerFactory();
@@ -41,7 +41,20 @@ app.use(requestLogger(loggerFactory.getLogger()));
 //docs
 const swaggerDocument = yaml.load(
   fs.readFileSync(path.join(__dirname, "../docs/swagger.yaml"), "utf8")
-) as object;
+) as any;
+
+// Aggiorna dinamicamente la configurazione del server con le variabili d'ambiente
+if (swaggerDocument.servers && swaggerDocument.servers[0]) {
+  const port = process.env.PORT || 3000;
+  const host = process.env.HOST || 'localhost';
+  const protocol = host == "localhost" ? "http" : "https";
+
+  swaggerDocument.servers[0].url = `http://localhost:${port}`;
+  swaggerDocument.servers[0].description = 'Docker Container local Server';
+
+  swaggerDocument.servers[1].url = `https://${host}:${port}`;
+  swaggerDocument.servers[1].description = 'API Server';
+}
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

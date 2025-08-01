@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@generated/*": ["generated/*"],
+      "@generated/prisma": ["generated/prisma"]
+    }
+  }
+}
