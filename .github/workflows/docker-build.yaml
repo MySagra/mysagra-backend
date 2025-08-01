@@ -23,4 +23,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/MySagra/mysagra-server:latest
+          tags: ghcr.io/mysagra/mysagra-server:latest
