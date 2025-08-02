@@ -226,7 +226,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/CategoryBasic"
+                  $ref: "#/components/schemas/Category"
     post:
       security:
         - BearerAuth: []
@@ -244,7 +244,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryBasic"
+                $ref: "#/components/schemas/Category"
         400:
           description: Categoria esistente o dati non validi
   /categories/available:
@@ -259,7 +259,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/CategoryBasic"
+                  $ref: "#/components/schemas/Category"
   /categories/available/{id}:
     patch:
       security:
@@ -274,7 +274,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryBasic"
+                $ref: "#/components/schemas/Category"
         404:
           description: Categoria non trovata
 
@@ -290,7 +290,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryBasic"
+                $ref: "#/components/schemas/Category"
         404:
           description: Categoria non trovata
     put:
@@ -312,7 +312,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CategoryBasic"
+                $ref: "#/components/schemas/Category"
         400:
           description: Nome già esistente o dati non validi
         404:
@@ -327,6 +327,48 @@ paths:
       responses:
         204:
           description: Cancellato con successo
+        404:
+          description: Categoria non trovata
+  /categories/{id}/image:
+    get:
+      tags: [Categories]
+      summary: Ottiene l'immagine di una categoria
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Immagine della categoria trovata
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: Categoria non trovata
+    patch:
+      security:
+        - BearerAuth: []
+      tags: [Categories]
+      summary: Aggiorna l'immagine di una categoria
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Immagine della categoria aggiornata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
         404:
           description: Categoria non trovata
   /foods:
@@ -774,7 +816,7 @@ components:
           type: integer
           example: 1
           description: "Posizione della categoria nell'elenco"
-    CategoryBasic:
+    Category:
       type: object
       properties:
         id:
@@ -783,10 +825,17 @@ components:
         name:
           type: string
           example: "pizzeria"
+        available:
+          type: boolean
+          example: true
         position:
           type: integer
           example: 1
           description: "Posizione della categoria nell'elenco"
+        image:
+          type: string
+          format: uri
+          example: "image_url.jpg"
     Food:
       type: object
       properties:
@@ -808,7 +857,7 @@ components:
           type: boolean
           example: true
         category:
-          $ref: "#/components/schemas/CategoryBasic"
+          $ref: "#/components/schemas/Category"
     FoodInput:
       type: object
       required:
@@ -934,4 +983,4 @@ components:
           type: number
           format: float
         category:
-          $ref: "#/components/schemas/CategoryBasic"
+          $ref: "#/components/schemas/Category"

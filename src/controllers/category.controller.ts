@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import prisma from "@/utils/prisma";
+import path from "path";
 
 export const getCategories = async (req: Request, res: Response): Promise<void> => {
     const categories = await prisma.category.findMany({
@@ -126,5 +127,53 @@ export const deleteCategory = async (req: Request, res: Response): Promise<void>
     }
     catch (err) {
         res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export const getImage = async (req: Request, res: Response): Promise<void> => {
+    const id = parseInt(req.params.id);
+
+    const category = await prisma.category.findUnique({
+        where: {
+            id
+        }
+    });
+
+    const basePath = "../../public";
+
+    if (category?.image) {
+        res.sendFile(path.join(__dirname, basePath, 'uploads', 'categories', category.image))
+    }
+    else {
+        res.sendFile(path.join(__dirname, basePath, 'images', 'noimage.jpg'));
+    }
+}
+
+export const uploadImage = async (req: Request, res: Response): Promise<void> => {
+    const id = parseInt(req.params.id);
+    const file = req.file;
+
+    if (!req.file) {
+        res.status(400).json({ errore: 'File non presente' });
+        return;
+    }
+
+    try {
+        const category = await prisma.category.update({
+            where: {
+                id
+            },
+            data: {
+                image: file?.filename
+            }
+        });
+
+        res.status(200).json({
+            image: category.image
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Image not saved"
+        });
     }
 }

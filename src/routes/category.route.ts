@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { getCategories, getCategoryById, createCategory, updateCategory, deleteCategory, getAvailableCategories, patchAvailableCategory } from "@/controllers/category.controller";
+import { getCategories, getCategoryById, createCategory, updateCategory, deleteCategory, getAvailableCategories, patchAvailableCategory, getImage, uploadImage } from "@/controllers/category.controller";
 import { checkCategoryNameAlreadyExist, checkCategoryObj} from "@/middlewares/checkObjects/checkCategory";
 import { validateIdParam } from "@/middlewares/validateIdParam";
 import { checkRole } from "@/middlewares/authMiddleware";
+import { upload } from "@/utils/multer/upload";
 
 const router = Router();
 
@@ -29,6 +30,20 @@ router.post(
     checkCategoryObj,
     checkCategoryNameAlreadyExist,
     createCategory
+);
+
+router.get(
+    "/:id/image",
+    validateIdParam,
+    getImage
+);
+
+router.patch(
+    "/:id/image",
+    checkRole(["admin"]),
+    validateIdParam,
+    upload.single('image'),
+    uploadImage
 );
 
 router.put(
