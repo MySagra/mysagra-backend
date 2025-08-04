@@ -32,12 +32,6 @@ router.post(
     createCategory
 );
 
-router.get(
-    "/:id/image",
-    validateIdParam,
-    getImage
-);
-
 router.patch(
     "/:id/image",
     checkRole(["admin"]),

@@ -43,7 +43,7 @@ const swaggerDocument = yaml.load(
   fs.readFileSync(path.join(__dirname, "../docs/swagger.yaml"), "utf8")
 ) as any;
 
-// Aggiorna dinamicamente la configurazione del server con le variabili d'ambiente
+// Dynami update of docs
 if (swaggerDocument.servers && swaggerDocument.servers[0]) {
   const port = process.env.PORT || 3000;
   const host = process.env.HOST || 'localhost';
@@ -57,6 +57,9 @@ if (swaggerDocument.servers && swaggerDocument.servers[0]) {
 }
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(express.static(path.join(__dirname, '../public')));
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 app.use("/auth/login", loginRoutes)
 app.use("/categories", categoryRoutes);

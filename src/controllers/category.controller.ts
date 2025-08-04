@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import fs from "fs";
 
 import prisma from "@/utils/prisma";
 import path from "path";
@@ -131,21 +132,17 @@ export const deleteCategory = async (req: Request, res: Response): Promise<void>
 }
 
 export const getImage = async (req: Request, res: Response): Promise<void> => {
-    const id = parseInt(req.params.id);
-
-    const category = await prisma.category.findUnique({
-        where: {
-            id
-        }
-    });
+    const image = req.params.image;
 
     const basePath = "../../public";
 
-    if (category?.image) {
-        res.sendFile(path.join(__dirname, basePath, 'uploads', 'categories', category.image))
+    const imagePath = path.join(__dirname, basePath, 'uploads', 'categories', image);
+
+    if (fs.existsSync(imagePath)) {
+        res.status(200).sendFile(imagePath)
     }
     else {
-        res.sendFile(path.join(__dirname, basePath, 'images', 'noimage.jpg'));
+        res.status(404).sendFile(path.join(__dirname, basePath, 'images', 'noimage.jpg'));
     }
 }
 
@@ -159,6 +156,23 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
     }
 
     try {
+        const oldCategory = await prisma.category.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if (oldCategory?.image) {
+            const imagePath = path.join(__dirname, "../../public/uploads/categories/", oldCategory.image);
+            try {
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
+            } catch (deleteErr) {
+                console.error('Errore nella cancellazione del file precedente:', deleteErr);
+            }
+        }
+
         const category = await prisma.category.update({
             where: {
                 id
@@ -168,9 +182,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
             }
         });
 
-        res.status(200).json({
-            image: category.image
-        });
+        res.status(200).json(category);
     } catch (err) {
         res.status(500).json({
             message: "Image not saved"
