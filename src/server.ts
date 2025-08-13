@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import compression = require('compression');
 import { errorHandler } from './middlewares/errorHandler';
 import { limiter } from './middlewares/limiter';
+import helmet from 'helmet';
 import path from "path";
 
 dotenv.config();
@@ -33,19 +34,49 @@ if (process.env.NODE_ENV === "production") {
   app.set('trust proxy', 1); //trust nginx reverse proxy
 }
 
-//global middlwares
+//security middlwares
 app.use(express.json({ limit: "10kb" }));
 app.use(cors({ origin: [`http://localhost:${port}`, `https://${process.env.HOST}`], credentials: true }));
+app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'", `https://${process.env.HOST}`],
+    imgSrc: ["'self'", "data:", `https://${process.env.HOST}`],
+    scriptSrc: ["'self'", `https://${process.env.HOST}`],
+    styleSrc: ["'self'", `https://${process.env.HOST}`],
+  }
+}));
+if (process.env.NODE_ENV === "production") {
+  app.disable('x-powered-by');
+}
+//app.use(limiter);
+
+//gloabal middlewares
 app.use(requestId);
-app.use(limiter);
 app.use(loggingMiddleware);
 app.use(compression());
 
 //static routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+
+//health check
+// Health Check
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date(),
+    uptime: process.uptime(),
+    memoryUsage: process.memoryUsage(),
+  });
+});
 
 //routes
 app.use("/v1/auth/login", loginRouter)

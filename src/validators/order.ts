@@ -17,11 +17,12 @@ export const orderIdSchema = Joi.object({
 })
 
 export const validateOrder : RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-    const { error } = orderSchema.validate(req.body);
+    const { error, value } = orderSchema.validate(req.body, { convert: true });
     if(error) {
         res.status(400).json({ message: error.details[0].message });
         return;
     }
+    req.body = value;
     next();
 }
 

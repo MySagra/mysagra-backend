@@ -51,13 +51,16 @@ COPY --from=build /app/prisma ./prisma
 COPY package*.json ./
 
 # Expose port (adjust if needed)
-EXPOSE 3000
+EXPOSE 4300
 
 # Environment variables can be overridden at runtime
 ENV NODE_ENV=production
+ENV PORT=4300
 ENV DATABASE_URL=""
 ENV HOST="localhost"
-ENV PORT=3000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:4300/health || exit 1
 
 # Run the application
 CMD ["sh", "-c", "until nc -z mariadb 3306; do echo 'Waiting for MariaDB...'; sleep 2; done && npx prisma db push --schema /app/prisma/schema.prisma && node /app/prisma/seed.js && node /app/build/server.js"]

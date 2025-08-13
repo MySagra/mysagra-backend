@@ -65,10 +65,10 @@ const options: SwaggerOptions = {
             }
         }
     },
-    // Corretti i percorsi per puntare ai file compilati
+    // Percorsi per leggere documentazione da file TypeScript e JavaScript
     apis: [
-        path.join(__dirname, '../routes/**/*.ts'), // Percorso assoluto ai file compilati
-        path.join(__dirname, '../controllers/**/*.ts'), // Se hai documentazione nei controller
+        path.join(__dirname, '../routes/**/*.{ts,js}'), // Legge sia .ts che .js
+        path.join(__dirname, '../controllers/**/*.{ts,js}'), // Se hai documentazione nei controller
     ]
 }
 
