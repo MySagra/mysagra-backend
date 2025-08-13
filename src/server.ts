@@ -2,72 +2,62 @@
 import express from 'express';
 import cors from "cors"
 import dotenv from 'dotenv';
-dotenv.config();
+import compression = require('compression');
+import { errorHandler } from './middlewares/errorHandler';
+import { limiter } from './middlewares/limiter';
+import path from "path";
 
-//logger
-import { LoggerFactory } from './utils/logger/loggerFactory';
-import { requestLogger } from './middlewares/requestLogger';
+dotenv.config();
 
 //docs
 import swaggerUi from "swagger-ui-express";
-import fs from "fs";
-import path from "path";
-import yaml from "js-yaml";
+import { swaggerSpec } from './docs/swagger';
 
 //routes
-import loginRoutes from "@/routes/auth/login.route"
-import categoryRoutes from "@/routes/category.route"
-import foodRoutes from "@/routes/food.routes"
-import orderRoutes from "@/routes/order.route"
-import roleRoutes from "@/routes/role.route"
-import userRoutes from "@/routes/user.route"
-import statsRoutes from "@/routes/stats.route"
-
+import loginRouter from "@/routes/auth/login.route"
+import categoryRouter from "@/routes/category.route"
+import foodRouter from "@/routes/food.routes"
+import orderRouter from "@/routes/order.route"
+import roleRouter from "@/routes/role.route"
+import userRouter from "@/routes/user.route"
+import statsRouter from "@/routes/stats.route"
+import { requestId } from './middlewares/requestId';
+import { loggingMiddleware } from './middlewares/logging';
 
 //app config
 const app = express();
 const port = process.env.PORT;
 
-app.use(cors());
-app.use(express.json());
-app.use(cors({ origin: [`http://localhost:${port}`, `https://${process.env.HOST}`], credentials: true }));
-
-//create logger
-const loggerFactory = new LoggerFactory();
-
-//log middleware
-app.use(requestLogger(loggerFactory.getLogger()));
-
-//docs
-const swaggerDocument = yaml.load(
-  fs.readFileSync(path.join(__dirname, "../docs/swagger.yaml"), "utf8")
-) as any;
-
-// Dynami update of docs
-if (swaggerDocument.servers && swaggerDocument.servers[0]) {
-  const port = process.env.PORT || 3000;
-  const host = process.env.HOST || 'localhost';
-  const protocol = host == "localhost" ? "http" : "https";
-
-  swaggerDocument.servers[0].url = `http://localhost:${port}`;
-  swaggerDocument.servers[0].description = 'Docker Container local Server';
-
-  swaggerDocument.servers[1].url = `https://${host}:${port}`;
-  swaggerDocument.servers[1].description = 'API Server';
+//trust nginx
+if (process.env.NODE_ENV === "production") {
+  app.set('trust proxy', 1); //trust nginx reverse proxy
 }
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+//global middlwares
+app.use(express.json({ limit: "10kb" }));
+app.use(cors({ origin: [`http://localhost:${port}`, `https://${process.env.HOST}`], credentials: true }));
+app.use(requestId);
+app.use(limiter);
+app.use(loggingMiddleware);
+app.use(compression());
+
+//static routes
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
-app.use("/auth/login", loginRoutes)
-app.use("/categories", categoryRoutes);
-app.use("/foods", foodRoutes);
-app.use("/orders", orderRoutes);
-app.use("/roles", roleRoutes);
-app.use("/users", userRoutes);
-app.use("/stats", statsRoutes);
+//routes
+app.use("/v1/auth/login", loginRouter)
+app.use("/v1/categories", categoryRouter);
+app.use("/v1/foods", foodRouter);
+app.use("/v1/orders", orderRouter);
+app.use("/v1/roles", roleRouter);
+app.use("/v1/users", userRouter);
+app.use("/v1/stats", statsRouter);
+
+//error middleware
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server is listening on http://localhost:${port}`);

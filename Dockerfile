@@ -47,9 +47,6 @@ COPY --from=build /app/generated ./generated
 # Copy Prisma schema and migrations
 COPY --from=build /app/prisma ./prisma
 
-# Copy documentation
-COPY --from=build /app/docs ./docs
-
 # Copy package.json for metadata
 COPY package*.json ./
 

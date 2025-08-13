@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { FoodsOrdered, Order } from "@generated/prisma";
 import generateOrderId from "@/lib/idGenerator";
 
 import prisma from "@/utils/prisma";
+import { asyncHandler } from "@/utils/asyncHandler";
 
-export const getOrders = async (req: Request, res: Response): Promise<void> => {
+export const getOrders = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { page } = req.params;
 
     const take = 21;
@@ -55,9 +56,9 @@ export const getOrders = async (req: Request, res: Response): Promise<void> => {
             prevPage: hasPrevPage ? parseInt(page) - 1 : null
         }
     });
-}
+})
 
-export const getDailyOrders = async (req: Request, res: Response): Promise<void> => {
+export const getDailyOrders = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -98,9 +99,9 @@ export const getDailyOrders = async (req: Request, res: Response): Promise<void>
         return;
     }
     res.status(200).json(orders);
-}
+})
 
-export const getOrderById = async (req: Request, res: Response): Promise<void> => {
+export const getOrderById = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id = req.params.id;
 
     const order = await prisma.order.findUnique({
@@ -134,9 +135,9 @@ export const getOrderById = async (req: Request, res: Response): Promise<void> =
     }
 
     res.status(200).json(order);
-}
+})
 
-export const searchOrder = async (req: Request, res: Response): Promise<void> => {
+export const searchOrder = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const value = req.params.value;
 
     const orders = await prisma.order.findMany({
@@ -173,9 +174,9 @@ export const searchOrder = async (req: Request, res: Response): Promise<void> =>
     }
 
     res.status(200).json(orders);
-}
+});
 
-export const searchDailyOrder = async (req: Request, res: Response): Promise<void> => {
+export const searchDailyOrder = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const value = req.params.value;
 
     const today = new Date();
@@ -221,9 +222,9 @@ export const searchDailyOrder = async (req: Request, res: Response): Promise<voi
     }
 
     res.status(200).json(orders);
-}
+});
 
-export const createOrder = async (req: Request, res: Response): Promise<void> => {
+export const createOrder = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const order: Order = req.body;
     const foodsOrdereds: Array<FoodsOrdered> = req.body.foodsOrdered;
 
@@ -240,56 +241,45 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price += Number(food?.price ?? 0) * Number(foodOrder.quantity);
     }
 
-    try {
-        const newOrder = await prisma.order.create({
-            data: {
-                id: await generateOrderId(),
-                table: order.table.toString(),
-                customer: order.customer,
-                price: price.toFixed(2).toString()
-            }
-        });
+    const newOrder = await prisma.order.create({
+        data: {
+            id: await generateOrderId(),
+            table: order.table.toString(),
+            customer: order.customer,
+            price: price.toFixed(2).toString()
+        }
+    });
 
-        await prisma.foodsOrdered.createMany({
-            data: foodsOrdereds.map(foodsOrdered => ({ quantity: foodsOrdered.quantity, foodId: foodsOrdered.foodId, orderId: newOrder.id }))
-        })
+    await prisma.foodsOrdered.createMany({
+        data: foodsOrdereds.map(foodsOrdered => ({ quantity: foodsOrdered.quantity, foodId: foodsOrdered.foodId, orderId: newOrder.id }))
+    })
 
-        const fullOrder = await prisma.order.findFirst({
-            where: {
-                id: newOrder.id
-            },
-            include: {
-                foodsOrdered: {
-                    include: {
-                        food: true
-                    }
+    const fullOrder = await prisma.order.findFirst({
+        where: {
+            id: newOrder.id
+        },
+        include: {
+            foodsOrdered: {
+                include: {
+                    food: true
                 }
             }
-        })
+        }
+    })
 
-        res.status(201).json(fullOrder);
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-}
+    res.status(201).json(fullOrder);
+});
 
-export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
+export const deleteOrder = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id = req.params.id;
 
-    try {
-        await prisma.order.delete({
-            where: {
-                id
-            }
-        });
+    await prisma.order.delete({
+        where: {
+            id
+        }
+    });
 
-        res.status(200).json({
-            message: "Order deleted"
-        });
-    }
-    catch (err) {
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-}
+    res.status(200).json({
+        message: "Order deleted"
+    });
+});

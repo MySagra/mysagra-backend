@@ -1,7 +1,16 @@
 import { getJWTPayload } from '@/lib/JWT';
+import { Token } from '@/types/token';
 import { Request, Response, NextFunction } from 'express';
 
-export function checkRole(roles: string[]) {
+declare global {
+    namespace Express {
+        interface Request {
+            user: Token;
+        }
+    }
+}
+
+export function authenticate(roles: string[]) {
     return (req: Request, res: Response, next: NextFunction) => {
         const authHeader = req.headers.authorization;
 
@@ -25,6 +34,7 @@ export function checkRole(roles: string[]) {
             return
         }
 
+        req.user = payload;
         next();
     };
 }
