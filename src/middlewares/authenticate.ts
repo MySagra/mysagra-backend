@@ -3,11 +3,11 @@ import { Token } from '@/types/token';
 import { Request, Response, NextFunction } from 'express';
 
 declare global {
-    namespace Express {
-        interface Request {
-            user: Token;
-        }
+  namespace Express {
+    interface Request {
+      user?: Token;
     }
+  }
 }
 
 export function authenticate(roles: string[]) {

@@ -6,31 +6,21 @@ const foodSchema = Joi.object({
     quantity: Joi.number().integer().min(1).required()
 })
 
-const orderSchema = Joi.object({
-    table: Joi.number().min(0).required(),
-    customer: Joi.string().min(1).required(),
-    foodsOrdered: Joi.array().items(foodSchema).min(1).required()
+export const createOrderSchema = Joi.object({
+    body: Joi.object({
+        table: Joi.number().min(0).required(),
+        customer: Joi.string().min(1).required(),
+        foodsOrdered: Joi.array().items(foodSchema).min(1).required()
+    })
 })
 
-export const orderIdSchema = Joi.object({
-    id: Joi.string().length(3).required()
+export const idOrderSchema = Joi.object({
+    params: Joi.object({
+        id: Joi.string().length(3).required()
+    })
 })
 
-export const validateOrder : RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-    const { error, value } = orderSchema.validate(req.body, { convert: true });
-    if(error) {
-        res.status(400).json({ message: error.details[0].message });
-        return;
-    }
-    req.body = value;
-    next();
-}
-
-export const validateOrderId : RequestHandler = (req: Request, res: Response, next: NextFunction) => {
-    const { error } = orderIdSchema.validate(req.params);
-    if(error) {
-        res.status(400).json({ message: error.details[0].message });
-        return;
-    }
-    next();
-}
+export const updateOrderSchema = Joi.object({
+    createOrderSchema,
+    idOrderSchema
+})

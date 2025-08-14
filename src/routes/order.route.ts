@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { getOrders, getOrderById, createOrder, deleteOrder, searchOrder, searchDailyOrder, getDailyOrders } from "@/controllers/order.controller";
-import { validateOrder, validateOrderId } from "@/validators/order";
+import { validateRequest } from "@/middlewares/validateRequest";
+import { createOrderSchema, updateOrderSchema, idOrderSchema } from "@/validators/order";
 import { authenticate } from "@/middlewares/authenticate";
-import { validatePage } from "@/validators/page";
+import { pageSchema } from "@/validators/page";
 
 const router = Router();
 
@@ -118,7 +119,7 @@ const router = Router();
 router.get(
     "/pages/:page",
     authenticate(["admin", "operator"]),
-    validatePage,
+    validateRequest(pageSchema),
     getOrders
 );
 
@@ -147,7 +148,7 @@ router.get(
  */
 router.post(
     "/",
-    validateOrder,
+    validateRequest(createOrderSchema),
     createOrder
 );
 
@@ -185,7 +186,7 @@ router.post(
 router.delete(
     "/:id",
     authenticate(["admin", "operator"]),
-    validateOrderId,
+    validateRequest(idOrderSchema),
     deleteOrder
 );
 
@@ -227,7 +228,7 @@ router.delete(
 router.get(
     "/:id",
     authenticate(["admin", "operator"]),
-    validateOrderId,
+    validateRequest(idOrderSchema),
     getOrderById
 );
 

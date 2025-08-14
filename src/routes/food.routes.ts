@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { getFoods, getFoodById, getFoodByCategory, createFood, updateFood, deleteFood, getAvailableFoods, getAvailableFoodByCategory, patchFoodAvailable } from "@/controllers/food.controller";
 import { checkUniqueFoodName, checkFoodExists } from "@/middlewares/checkFood";
-import { validateFood, validateFoodId } from "@/validators/food";
+import { validateRequest } from "@/middlewares/validateRequest";
+import { createFoodSchema, updateFoodSchema, idFoodSchema } from "@/validators/food";
 import { authenticate } from "@/middlewares/authenticate";
 
 const router = Router();
@@ -138,7 +139,7 @@ router.get(
 router.post(
     "/",
     authenticate(["admin"]),
-    validateFood,
+    validateRequest(createFoodSchema),
     checkUniqueFoodName,
     createFood
 );
@@ -183,8 +184,7 @@ router.post(
 router.put(
     "/:id",
     authenticate(["admin"]),
-    validateFoodId,
-    validateFood,
+    validateRequest(updateFoodSchema),
     checkFoodExists,
     checkUniqueFoodName,
     updateFood
@@ -222,7 +222,7 @@ router.put(
 router.patch(
     "/available/:id",
     authenticate(["admin"]),
-    validateFoodId,
+    validateRequest(idFoodSchema),
     checkFoodExists,
     patchFoodAvailable
 )
@@ -256,7 +256,7 @@ router.patch(
  */
 router.get(
     "/available/categories/:id",
-    validateFoodId,
+    validateRequest(idFoodSchema),
     getAvailableFoodByCategory
 );
 
@@ -289,7 +289,7 @@ router.get(
  */
 router.get(
     "/categories/:id",
-    validateFoodId,
+    validateRequest(idFoodSchema),
     getFoodByCategory
 )
 
@@ -321,7 +321,7 @@ router.get(
 router.delete(
     "/:id",
     authenticate(["admin"]),
-    validateFoodId,
+    validateRequest(idFoodSchema),
     checkFoodExists,
     deleteFood
 );
@@ -355,7 +355,7 @@ router.delete(
  */
 router.get(
     "/:id",
-    validateFoodId,
+    validateRequest(idFoodSchema),
     getFoodById
 );
 

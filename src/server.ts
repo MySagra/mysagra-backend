@@ -43,7 +43,7 @@ app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'", `https://${process.env.HOST}`],
     imgSrc: ["'self'", "data:", `https://${process.env.HOST}`],
     scriptSrc: ["'self'", `https://${process.env.HOST}`],
-    styleSrc: ["'self'", `https://${process.env.HOST}`],
+    styleSrc: ["'self'", `https://${process.env.HOST}`, "'unsafe-inline'"],
   }
 }));
 if (process.env.NODE_ENV === "production") {
@@ -68,7 +68,6 @@ app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 //health check
-// Health Check
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",

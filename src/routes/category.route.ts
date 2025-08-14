@@ -2,10 +2,12 @@ import { Router } from "express";
 import { getCategories, getCategoryById, createCategory, updateCategory, deleteCategory, getAvailableCategories, patchAvailableCategory, getImage, uploadImage } from "@/controllers/category.controller";
 import { checkUniqueCategoryName, checkCategoryExists } from "@/middlewares/checkCategory";
 import { authenticate } from "@/middlewares/authenticate";
-import { upload } from "@/utils/multer/upload";
+import { ImageService } from "@/services/image.service";
 
-import { validateCategory, validateCategoryId } from "@/validators/category";
+import {createCategorySchema, updateCategorySchema, idCategorySchema} from "@/validators/category";
+import { validateRequest } from "@/middlewares/validateRequest";
 
+const imageService = new ImageService("categories");
 const router = Router();
 
 /**
@@ -117,7 +119,7 @@ router.get(
 router.patch(
     "/available/:id",
     authenticate(["admin"]),
-    validateCategoryId,
+    validateRequest(idCategorySchema),
     checkCategoryExists,
     patchAvailableCategory
 )
@@ -147,7 +149,7 @@ router.patch(
 router.post(
     "/",
     authenticate(["admin"]),
-    validateCategory,
+    validateRequest(createCategorySchema),
     checkUniqueCategoryName,
     createCategory
 );
@@ -169,18 +171,33 @@ router.post(
  *         schema:
  *           type: integer
  *           format: int64
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image file to upload for the category
+ *             required:
+ *               - image
  *     responses:
  *       200:
  *         description: Category image updated successfully
+ *       400:
+ *         description: Invalid image file or missing image
  *       404:
  *         description: Category not found
  */
 router.patch(
     "/:id/image",
     authenticate(["admin"]),
-    validateCategoryId,
+    validateRequest(idCategorySchema),
     checkCategoryExists,
-    upload.single('image'),
+    imageService.upload(),
     uploadImage
 );
 
@@ -220,8 +237,7 @@ router.patch(
 router.put(
     "/:id",
     authenticate(["admin"]),
-    validateCategoryId,
-    validateCategory,
+    validateRequest(updateCategorySchema),
     checkCategoryExists,
     checkUniqueCategoryName,
     updateCategory
@@ -254,7 +270,7 @@ router.put(
 router.delete(
     "/:id",
     authenticate(["admin"]),
-    validateCategoryId,
+    validateRequest(idCategorySchema),
     deleteCategory
 );
 
@@ -281,7 +297,7 @@ router.delete(
  */
 router.get(
     "/:id",
-    validateCategoryId,
+    validateRequest(idCategorySchema),
     getCategoryById
 );
 

@@ -28,6 +28,7 @@ export const loggingMiddleware = (
       logger.error("Request failed", logData);
       requestLogger.error("Request failed", logData);
     } else {
+      logger.info("Request completed", logData);
       requestLogger.info("Request completed", logData);
     }
   });
