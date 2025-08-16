@@ -35,19 +35,6 @@ if (process.env.NODE_ENV === "production") {
   app.set('trust proxy', 1); //trust nginx reverse proxy
 }
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  const method = req.method;
-  const url = req.originalUrl;
-  
-  console.log(`\n🌐 CORS Check - ${new Date().toISOString()}`);
-  console.log(`📡 ${method} ${url}`);
-  console.log(`🔗 Origin: ${origin || 'NESSUN ORIGIN'}`);
-  console.log(`🖥️  User-Agent: ${req.headers['user-agent']?.substring(0, 50)}...`);
-  
-  next();
-});
-
 //security middlwares
 app.use(express.json({ limit: "10kb" }));
 app.use(cors(corsOptions));
