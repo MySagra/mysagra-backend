@@ -19,8 +19,8 @@ model Category {
   name      String  @unique
   available Boolean @default(true)
   position  Int     @default(0)
-
-  foods Food[]
+  image     String?
+  foods     Food[]
 }
 
 model Food {
