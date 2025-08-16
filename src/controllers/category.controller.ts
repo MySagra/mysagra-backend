@@ -105,11 +105,18 @@ export const updateCategory = asyncHandler(async (req: Request, res: Response, n
 export const deleteCategory = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id = parseInt(req.params.id);
 
-    await prisma.category.delete({
+    const category = await prisma.category.delete({
         where: {
             id
         }
     })
+
+    if (category?.image) {
+        const imagePath = path.join(__dirname, "../../public/uploads/categories/", category.image);
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+        }
+    }
 
     res.status(200).json({
         message: "Category deleted"
@@ -136,7 +143,7 @@ export const uploadImage = asyncHandler(async (req: Request, res: Response, next
     const file = req.file;
 
     if (!req.file) {
-        res.status(400).json({ errore: 'File non presente' });
+        res.status(400).json({ errore: 'File not uploaded' });
         return;
     }
 
@@ -148,12 +155,8 @@ export const uploadImage = asyncHandler(async (req: Request, res: Response, next
 
     if (oldCategory?.image) {
         const imagePath = path.join(__dirname, "../../public/uploads/categories/", oldCategory.image);
-        try {
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            }
-        } catch (deleteErr) {
-            console.error('Errore nella cancellazione del file precedente:', deleteErr);
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
         }
     }
 

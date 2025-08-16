@@ -3,6 +3,7 @@ import prisma from "@/utils/prisma";
 
 export const checkUniqueFoodName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { name } = req.body;
+    const { id } = req.params;
 
     const food = await prisma.food.findUnique({
         where: {
@@ -10,7 +11,7 @@ export const checkUniqueFoodName = async (req: Request, res: Response, next: Nex
         }
     });
 
-    if (food) {
+    if ((!id && food) || (food && id && id != food.id.toString())) {
         res.status(409).json({ message: "Food name already exists, must be unique!" });
         return;
     }

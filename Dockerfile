@@ -47,8 +47,17 @@ COPY --from=build /app/generated ./generated
 # Copy Prisma schema and migrations
 COPY --from=build /app/prisma ./prisma
 
+# Copy public directory for static files and uploads
+COPY --from=build /app/public ./public
+
 # Copy package.json for metadata
 COPY package*.json ./
+
+# Create directories for volumes
+RUN mkdir -p /app/logs /app/public/uploads
+
+# Define volumes for persistent data
+VOLUME ["/app/public", "/app/logs"]
 
 # Expose port (adjust if needed)
 EXPOSE 4300

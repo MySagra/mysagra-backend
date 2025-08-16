@@ -3,14 +3,15 @@ import prisma from "@/utils/prisma";
 
 export const checkUniqueRoleName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { name } = req.body;
+    const { id } = req.params;
 
     const role = await prisma.role.findUnique({
         where: {
             name
         }
     });
-    
-    if (role) {
+
+    if ((!id && role) || (role && id && id != role.id.toString())) {
         res.status(409).json({ message: "Role name already exists, must be unique!" });
         return;
     }

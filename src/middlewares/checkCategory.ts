@@ -3,17 +3,19 @@ import prisma from "@/utils/prisma";
 
 export const checkUniqueCategoryName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { name } = req.body;
+    const { id } = req.params;
 
     const category = await prisma.category.findUnique({
         where: {
             name
         }
     });
-    
-    if (category) {
+
+    if ((!id && category) || (category && id && id != category.id.toString())) {
         res.status(409).json({ message: "Category name already exists, must be unique!" });
         return;
     }
+
     next();
 }
 

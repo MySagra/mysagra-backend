@@ -2,13 +2,14 @@
 import express from 'express';
 import cors from "cors"
 import dotenv from 'dotenv';
-import compression = require('compression');
-import { errorHandler } from './middlewares/errorHandler';
-import { limiter } from './middlewares/limiter';
+dotenv.config();
 import helmet from 'helmet';
 import path from "path";
 
-dotenv.config();
+import compression = require('compression');
+import { errorHandler } from './middlewares/errorHandler';
+import { limiter } from './middlewares/limiter';
+import { corsOptions } from './config/corsOptions';
 
 //docs
 import swaggerUi from "swagger-ui-express";
@@ -34,22 +35,35 @@ if (process.env.NODE_ENV === "production") {
   app.set('trust proxy', 1); //trust nginx reverse proxy
 }
 
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const method = req.method;
+  const url = req.originalUrl;
+  
+  console.log(`\n🌐 CORS Check - ${new Date().toISOString()}`);
+  console.log(`📡 ${method} ${url}`);
+  console.log(`🔗 Origin: ${origin || 'NESSUN ORIGIN'}`);
+  console.log(`🖥️  User-Agent: ${req.headers['user-agent']?.substring(0, 50)}...`);
+  
+  next();
+});
+
 //security middlwares
 app.use(express.json({ limit: "10kb" }));
-app.use(cors({ origin: [`http://localhost:${port}`, `https://${process.env.HOST}`], credentials: true }));
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
   directives: {
-    defaultSrc: ["'self'", `https://${process.env.HOST}`],
-    imgSrc: ["'self'", "data:", `https://${process.env.HOST}`],
-    scriptSrc: ["'self'", `https://${process.env.HOST}`],
-    styleSrc: ["'self'", `https://${process.env.HOST}`, "'unsafe-inline'"],
+    defaultSrc: ["'self'", process.env.FRONTEND_URL || ""],
+    imgSrc: ["'self'", "data:", process.env.FRONTEND_URL || ""],
+    scriptSrc: ["'self'", process.env.FRONTEND_URL || ""],
+    styleSrc: ["'self'", process.env.FRONTEND_URL || "", "'unsafe-inline'"],
   }
 }));
 if (process.env.NODE_ENV === "production") {
   app.disable('x-powered-by');
 }
-//app.use(limiter);
+//TODO: setup limiter for webapp app.use(limiter);
 
 //gloabal middlewares
 app.use(requestId);
@@ -78,7 +92,7 @@ app.get("/health", (req, res) => {
 });
 
 //routes
-app.use("/v1/auth/login", loginRouter)
+app.use("/auth/login", loginRouter)
 app.use("/v1/categories", categoryRouter);
 app.use("/v1/foods", foodRouter);
 app.use("/v1/orders", orderRouter);

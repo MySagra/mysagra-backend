@@ -85,7 +85,7 @@ const router = Router();
 
 /**
  * @openapi
- * /orders/pages/{page}:
+ * /v1/orders/pages/{page}:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -125,7 +125,7 @@ router.get(
 
 /**
  * @openapi
- * /orders:
+ * /v1/orders:
  *   post:
  *     summary: Create a new order
  *     tags:
@@ -154,7 +154,7 @@ router.post(
 
 /**
  * @openapi
- * /orders/{id}:
+ * /v1/orders/{id}:
  *   delete:
  *     security:
  *       - bearerAuth: []
@@ -192,7 +192,7 @@ router.delete(
 
 /**
  * @openapi
- * /orders/{id}:
+ * /v1/orders/{id}:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -234,7 +234,7 @@ router.get(
 
 /**
  * @openapi
- * /orders/search/daily/{value}:
+ * /v1/orders/search/daily/{value}:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -271,7 +271,7 @@ router.get(
 
 /**
  * @openapi
- * /orders/search/{value}:
+ * /v1/orders/search/{value}:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -308,7 +308,7 @@ router.get(
 
 /**
  * @openapi
- * /orders/day/today:
+ * /v1/orders/day/today:
  *   get:
  *     security:
  *       - bearerAuth: []

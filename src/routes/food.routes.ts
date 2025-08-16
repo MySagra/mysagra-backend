@@ -67,7 +67,7 @@ const router = Router();
 
 /**
  * @openapi
- * /foods:
+ * /v1/foods:
  *   get:
  *     summary: Get all foods
  *     tags:
@@ -89,7 +89,7 @@ router.get(
 
 /**
  * @openapi
- * /foods/available:
+ * /v1/foods/available:
  *   get:
  *     summary: Get all available foods
  *     tags:
@@ -111,7 +111,7 @@ router.get(
 
 /**
  * @openapi
- * /foods:
+ * /v1/foods:
  *   post:
  *     security:
  *       - bearerAuth: []
@@ -146,7 +146,7 @@ router.post(
 
 /**
  * @openapi
- * /foods/{id}:
+ * /v1/foods/{id}:
  *   put:
  *     security:
  *       - bearerAuth: []
@@ -192,7 +192,7 @@ router.put(
 
 /**
  * @openapi
- * /foods/available/{id}:
+ * /v1/foods/available/{id}:
  *   patch:
  *     security:
  *       - bearerAuth: []
@@ -229,7 +229,7 @@ router.patch(
 
 /**
  * @openapi
- * /foods/available/categories/{id}:
+ * /v1/foods/available/categories/{id}:
  *   get:
  *     summary: Get all available foods by category
  *     tags:
@@ -262,7 +262,7 @@ router.get(
 
 /**
  * @openapi
- * /foods/categories/{id}:
+ * /v1/foods/categories/{id}:
  *   get:
  *     summary: Get all foods by category
  *     tags:
@@ -295,7 +295,7 @@ router.get(
 
 /**
  * @openapi
- * /foods/{id}:
+ * /v1/foods/{id}:
  *   delete:
  *     security:
  *       - bearerAuth: []
@@ -328,7 +328,7 @@ router.delete(
 
 /**
  * @openapi
- * /foods/{id}:
+ * /v1/foods/{id}:
  *   get:
  *     summary: Get a food item by ID
  *     tags:

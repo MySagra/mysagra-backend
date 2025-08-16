@@ -31,7 +31,7 @@ const router = Router();
 
 /**
  * @openapi
- * /roles:
+ * /v1/roles:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -60,7 +60,7 @@ router.get(
 
 /**
  * @openapi
- * /roles:
+ * /v1/roles:
  *   post:
  *     security:
  *       - bearerAuth: []
@@ -99,7 +99,7 @@ router.post(
 
 /**
  * @openapi
- * /roles/{id}:
+ * /v1/roles/{id}:
  *   put:
  *     security:
  *       - bearerAuth: []
@@ -149,7 +149,7 @@ router.put(
 
 /**
  * @openapi
- * /roles/{id}:
+ * /v1/roles/{id}:
  *   delete:
  *     security:
  *       - bearerAuth: []
@@ -193,7 +193,7 @@ router.delete(
 
 /**
  * @openapi
- * /roles/{id}:
+ * /v1/roles/{id}:
  *   get:
  *     security:
  *       - bearerAuth: []

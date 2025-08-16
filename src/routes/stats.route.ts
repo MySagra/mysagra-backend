@@ -75,7 +75,7 @@ const router = Router();
 
 /**
  * @openapi
- * /stats/total-orders:
+ * /v1/stats/total-orders:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -129,7 +129,7 @@ router.get(
 
 /**
  * @openapi
- * /stats/foods-ordered:
+ * /v1/stats/foods-ordered:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -183,7 +183,7 @@ router.get(
 
 /**
  * @openapi
- * /stats/revenue:
+ * /v1/stats/revenue:
  *   get:
  *     security:
  *       - bearerAuth: []

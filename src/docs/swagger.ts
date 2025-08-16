@@ -13,17 +13,6 @@ const options: SwaggerOptions = {
             description: "Hello World!",
             version: '1.0.0',
         },
-
-        servers: [
-            {
-                url: `http://localhost:${port}/v1`,
-                description: 'Development server V1'
-            },
-            {
-                url: `https://${host}/v1`,
-                description: 'Production server V1'
-            }
-        ],
         tags: [
             {
                 name: 'Auth',

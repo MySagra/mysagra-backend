@@ -3,7 +3,7 @@ import Joi from "joi";
 
 export const createUserSchema = Joi.object({
     body: Joi.object({
-        username: Joi.string().min(6).required(),
+        username: Joi.string().min(4).required(),
         password: Joi.string().min(8).required(),
         roleId: Joi.number().integer().min(0).required()
     })

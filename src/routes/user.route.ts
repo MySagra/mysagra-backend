@@ -51,7 +51,7 @@ const router = Router();
 
 /**
  * @openapi
- * /users:
+ * /v1/users:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -80,7 +80,7 @@ router.get(
 
 /**
  * @openapi
- * /users:
+ * /v1/users:
  *   post:
  *     security:
  *       - bearerAuth: []
@@ -119,7 +119,7 @@ router.post(
 
 /**
  * @openapi
- * /users/{id}:
+ * /v1/users/{id}:
  *   delete:
  *     security:
  *       - bearerAuth: []
@@ -163,7 +163,7 @@ router.delete(
 
 /**
  * @openapi
- * /users/{id}:
+ * /v1/users/{id}:
  *   get:
  *     security:
  *       - bearerAuth: []

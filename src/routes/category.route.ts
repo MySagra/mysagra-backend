@@ -48,7 +48,7 @@ const router = Router();
 
 /**
  * @openapi
- * /categories:
+ * /v1/categories:
  *   get:
  *     summary: Get all categories
  *     tags:
@@ -70,7 +70,7 @@ router.get(
 
 /**
  * @openapi
- * /categories/available:
+ * /v1/categories/available:
  *   get:
  *     summary: Get all available categories
  *     tags:
@@ -94,7 +94,7 @@ router.get(
 
 /**
  * @openapi
- * /categories/available/{id}:
+ * /v1/categories/available/{id}:
  *   patch:
  *     security:
  *       - bearerAuth: []
@@ -126,7 +126,7 @@ router.patch(
 
 /**
  * @openapi
- * /categories:
+ * /v1/categories:
  *   post:
  *     security:
  *       - bearerAuth: []
@@ -156,7 +156,7 @@ router.post(
 
 /**
  * @openapi
- * /categories/{id}/image:
+ * /v1/categories/{id}/image:
  *   patch:
  *     security:
  *       - bearerAuth: []
@@ -203,7 +203,7 @@ router.patch(
 
 /**
  * @openapi
- * /categories/{id}:
+ * /v1/categories/{id}:
  *   put:
  *     security:
  *       - bearerAuth: []
@@ -245,7 +245,7 @@ router.put(
 
 /**
  * @openapi
- * /categories/{id}:
+ * /v1/categories/{id}:
  *   delete:
  *     security:
  *       - bearerAuth: []
@@ -276,7 +276,7 @@ router.delete(
 
 /**
  * @openapi
- * /categories/{id}:
+ * /v1/categories/{id}:
  *   get:
  *     summary: Get a category by ID
  *     tags:
