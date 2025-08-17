@@ -105,6 +105,12 @@ export const updateCategory = asyncHandler(async (req: Request, res: Response, n
 export const deleteCategory = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id = parseInt(req.params.id);
 
+    await prisma.food.deleteMany({
+        where: {
+            categoryId: id
+        }
+    })
+
     const category = await prisma.category.delete({
         where: {
             id
