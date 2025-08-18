@@ -165,7 +165,7 @@ router.put(
  *           type: integer
  *           format: int64
  *     responses:
- *       200:
+ *       204:
  *         description: Role deleted successfully
  *         content:
  *           application/json:

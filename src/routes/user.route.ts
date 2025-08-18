@@ -135,7 +135,7 @@ router.post(
  *           type: integer
  *           format: int64
  *     responses:
- *       200:
+ *       204:
  *         description: User deleted successfully
  *         content:
  *           application/json:

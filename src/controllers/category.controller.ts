@@ -124,7 +124,7 @@ export const deleteCategory = asyncHandler(async (req: Request, res: Response, n
         }
     }
 
-    res.status(200).json({
+    res.status(204).json({
         message: "Category deleted"
     });
 });
