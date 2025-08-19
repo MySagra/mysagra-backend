@@ -311,7 +311,7 @@ router.get(
  *           type: integer
  *           format: int64
  *     responses:
- *       204:
+ *       200:
  *         description: Food item deleted successfully
  *       400:
  *         description: Invalid ID parameter

@@ -172,7 +172,7 @@ router.post(
  *           maxLength: 3
  *           example: "A01"
  *     responses:
- *       204:
+ *       200:
  *         description: Order deleted successfully
  *       400:
  *         description: Invalid order ID parameter

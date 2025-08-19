@@ -262,7 +262,7 @@ router.put(
  *           format: int64
  *         example: 1
  *     responses:
- *       204:
+ *       200:
  *         description: Category deleted successfully
  *       404:
  *         description: Category not found

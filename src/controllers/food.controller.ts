@@ -156,7 +156,7 @@ export const deleteFood = asyncHandler(async (req: Request, res: Response, next:
         }
     });
 
-    res.status(204).json({
+    res.status(200).json({
         message: "Category deleted"
     });
 });
