@@ -72,4 +72,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=30s \
   CMD wget --no-verbose --tries=1 --spider http://localhost:4300/health || exit 1
 
 # Run the application
-CMD ["sh", "-c", "until nc -z mariadb 3306; do echo 'Waiting for MariaDB...'; sleep 2; done && npx prisma db push --schema /app/prisma/schema.prisma && node /app/prisma/seed.js && node /app/build/server.js"]
+CMD ["sh", "-c", "until nc -z mariadb 3306; do echo 'Waiting for MariaDB...'; sleep 2; done && npx prisma db push --schema /app/prisma/schema.prisma && node /app/prisma/seed.js && node /app/build/index.js"]
