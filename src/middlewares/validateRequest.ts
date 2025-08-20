@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AnySchema } from "joi";
+import { logger } from "@/config/logger";
 
 export const validateRequest = (schema: AnySchema) => {
     return (req: Request, res: Response, next: NextFunction): void => {
@@ -16,7 +17,11 @@ export const validateRequest = (schema: AnySchema) => {
 
         if (error) {
             res.status(400).json({ message: error.details.map(d => d.message).join('; ') });
-            return;
+            logger.error({
+                message: "Validation error",
+                details: error.details
+            });
+            return; 
         }
 
         //converted fields

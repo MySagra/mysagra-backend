@@ -20,7 +20,7 @@ export const loggingMiddleware = (
       context: "HttpRequest",
       userId: req.user?.userId,
       query: Object.keys(req.query).length ? req.query : undefined,
-      bodySize: req.body ? Object.keys(req.body).length : 0,
+      bodySize: req.body ? Object.keys(req.body).length : 0
     };
 
     // Log su entrambi: requestLogger per il file dedicato e logger principale per errori
