@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getFoods, getFoodById, getFoodByCategory, createFood, updateFood, deleteFood, getAvailableFoods, getAvailableFoodByCategory, patchFoodAvailable } from "@/controllers/food.controller";
-import { checkUniqueFoodName, checkFoodExists } from "@/middlewares/checkFood";
+import { checkUniqueFoodName, checkFoodExists, checkFoodCategoryExists } from "@/middlewares/checkFood";
 import { validateRequest } from "@/middlewares/validateRequest";
 import { createFoodSchema, updateFoodSchema, idFoodSchema } from "@/validators/food";
 import { authenticate } from "@/middlewares/authenticate";
@@ -140,6 +140,7 @@ router.post(
     "/",
     authenticate(["admin"]),
     validateRequest(createFoodSchema),
+    checkFoodCategoryExists,
     checkUniqueFoodName,
     createFood
 );

@@ -29,7 +29,7 @@ export const checkCategoryExists = async (req: Request, res: Response, next: Nex
     })
 
     if (!category) {
-        res.status(404).json({ message: "Food not exists" });
+        res.status(404).json({ message: "Category not exists" });
         return;
     }
     next();

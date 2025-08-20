@@ -33,3 +33,19 @@ export const checkFoodExists = async (req: Request, res: Response, next: NextFun
     }
     next();
 }
+
+export const checkFoodCategoryExists = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { categoryId } = req.body;
+
+    const category = await prisma.category.findUnique({
+        where: {
+            id: parseInt(categoryId)
+        }
+    })
+
+    if (!category) {
+        res.status(404).json({ message: "Category not exists" });
+        return;
+    }
+    next();
+}

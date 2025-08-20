@@ -87,6 +87,14 @@ app.use("/v1/roles", roleRouter);
 app.use("/v1/users", userRouter);
 app.use("/v1/stats", statsRouter);
 
+//error handling for 404
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: "error",
+    message: "Not Found",
+  });
+});
+
 //error middleware
 app.use(errorHandler);
 

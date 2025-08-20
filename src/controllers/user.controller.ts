@@ -56,6 +56,29 @@ export const createUser = asyncHandler(async (req: Request, res: Response, next:
     res.status(201).json(newUser);
 });
 
+export const updateUser = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { id } = req.params;
+    const { username, password, roleId } = req.body;
+
+    const updateUser = await prisma.user.update({
+        where: {
+            id: parseInt(id)
+        },
+        data: {
+            username,
+            password: await hashPwd(password),
+            roleId
+        },
+        select: {
+            id: true,
+            username: true,
+            role: true
+        }
+    });
+
+    res.status(200).json(updateUser);
+});
+
 export const deleteUser = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id = parseInt(req.params.id);
 

@@ -30,6 +30,10 @@ const router = Router();
  *           minLength: 3
  *           maxLength: 3
  *           example: "A01"
+ *         dateTime:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-08-13T10:30:00Z"
  *         table:
  *           type: integer
  *           minimum: 0
@@ -37,6 +41,10 @@ const router = Router();
  *         customer:
  *           type: string
  *           example: "Mario Rossi"
+ *         price:
+ *           type: string
+ *           format: float
+ *           example: 25.50
  *         foodsOrdered:
  *           type: array
  *           items:
@@ -45,10 +53,6 @@ const router = Router();
  *           type: string
  *           format: date-time
  *           example: "2025-08-13T10:30:00Z"
- *         total:
- *           type: number
- *           format: float
- *           example: 25.50
  *     OrderRequest:
  *       type: object
  *       required:

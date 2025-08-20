@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUsers, getUserById, createUser, deleteUser } from "@/controllers/user.controller";
+import { getUsers, getUserById, createUser, updateUser, deleteUser } from "@/controllers/user.controller";
 import { validateRequest } from "@/middlewares/validateRequest";
 import { createUserSchema, updateUserSchema, idUserSchema } from "@/validators/user";
 import { checkUniqueUsername } from "@/middlewares/checkUser";
@@ -116,6 +116,53 @@ router.post(
     checkUniqueUsername,
     createUser
 );
+
+/**
+ * @openapi
+ * /v1/users/{id}:
+ *   put:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Update a user
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the user to update
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserRequest'
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponse'
+ *       400:
+ *         description: Invalid request body
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ */
+router.put(
+    "/:id",
+    authenticate(["admin"]),
+    validateRequest(updateUserSchema),
+    checkUniqueUsername,
+    updateUser
+)
 
 /**
  * @openapi
