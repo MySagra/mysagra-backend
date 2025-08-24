@@ -1,5 +1,5 @@
 import { Token } from "@/types/token";
-import { Role, User } from "@generated/prisma";
+import { Role, User } from "@generated/prisma_client/client";
 
 import jwt from "jsonwebtoken"
 

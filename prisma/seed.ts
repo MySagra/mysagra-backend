@@ -1,43 +1,63 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env'});
 
-const { PrismaClient } = require("../generated/prisma/index.js")
-const hashPwd = require("../build/lib/hashPwd.js").default
+import { PrismaClient } from "../generated/prisma_client/client";
+const prisma = new PrismaClient();
+import bcrypt from "bcrypt";
 
-const prisma = new PrismaClient()
+const PEPPER = process.env.PEPPER;
+
+export default async function hashPwd(password: string): Promise<string> {
+    if(!PEPPER){
+        throw new Error("PEPPER not set")
+    }
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(password + PEPPER, saltRounds);
+    return hash;
+}
 
 async function main() {
+    const rolesCount = await prisma.role.count();
 
-    if (!await prisma.role.findFirst()) {
-        await prisma.role.create({
-            data: {
-                id: 1,
-                name: "admin"
-            }
-        })
-
-        await prisma.role.create({
-            data: {
-                id: 2,
-                name: "operator"
-            }
-        })
+    if(!rolesCount){
+        await prisma.role.createMany({
+            data: [
+                {
+                    id: 1,
+                    name: "ADMIN"
+                },
+                {
+                    id: 2,
+                    name: "OPERATOR"
+                }
+            ]
+        });
     }
 
-    if (!await prisma.user.findFirst()) {
-        await prisma.user.create({
+    const userCount = await prisma.user.count();
+
+    if(!userCount){
+        const hashedPassword = await hashPwd("admin");
+        const adminUser = await prisma.user.create({
             data: {
                 username: "admin",
-                password: await hashPwd("admin"),
+                password: hashedPassword,
                 roleId: 1
             }
-        })
+        });
+
+        console.log("Production seeding completed", adminUser);
+    }
+    else{
+        console.log("Production seeding skipped");
     }
 }
 
 main()
     .catch(e => {
-        console.error(e)
-        process.exit(1)
+        console.error("Error seeding production database", e);
+        process.exit(1);
     })
     .finally(async () => {
-        await prisma.$disconnect()
-    })
+        await prisma.$disconnect();
+    });

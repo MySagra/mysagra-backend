@@ -3,8 +3,7 @@ node_modules
 .env
 
 generated
-prisma/migrations
-build
+dist
 
 logs/
 public/uploads/categories/

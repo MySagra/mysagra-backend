@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import prisma from "@/utils/prisma";
 
-import { Food } from "@generated/prisma";
+import { Food } from "@generated/prisma_client/client";
 import { asyncHandler } from "@/utils/asyncHandler";
 
 export const getFoods = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {

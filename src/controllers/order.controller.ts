@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { FoodsOrdered, Order } from "@generated/prisma";
+import { FoodsOrdered, Order } from "@generated/prisma_client/client";
 import generateOrderId from "@/lib/idGenerator";
 
 import prisma from "@/utils/prisma";
