@@ -1,4 +1,4 @@
-import { Role } from "@generated/prisma"
+import { Role } from "@generated/prisma_client/client";
 
 export type Token = {
     userId: number,
