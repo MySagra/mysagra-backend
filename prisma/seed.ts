@@ -24,11 +24,11 @@ async function main() {
             data: [
                 {
                     id: 1,
-                    name: "ADMIN"
+                    name: "admin"
                 },
                 {
                     id: 2,
-                    name: "OPERATOR"
+                    name: "operator"
                 }
             ]
         });
