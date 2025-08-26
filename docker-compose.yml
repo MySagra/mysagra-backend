@@ -1,8 +1,11 @@
 services:
   mysagra-api:
-    image: "ghcr.io/mysagra/mysagra-server:latest"
+    build:
+      context: .
     command: ["sh", "-c", "npm run db:deploy && npm run db:seed && npm start"]
     env_file: .env
+    ports:
+      - "4300:4300"
     environment:
       - NODE_ENV="${NODE_ENV:-production}"
       - DATABASE_URL=mysql://${DB_USER:-mysagra}:${DB_USER_PASSWORD:-mysagra}@db:3306/${MYSQL_DATABASE:-mysagra}
@@ -19,8 +22,8 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - api_logs:/app/logs
-      - api_public:/app/public
+      - ./logs:/app/logs
+      - ./public:/app/public
     tmpfs:
       - /tmp
       - /run
@@ -35,16 +38,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-  mysagra-ui:
-    depends_on:
-      mysagra-api:
-        condition: service_healthy
-    image: "ghcr.io/mysagra/mysagra-client:latest"
-    ports:
-      - "3000:3000"
-    environment:
-      - API_URL=http://mysagra-api:4300
-    restart: unless-stopped
 
   db:
     image: mysql:8.0
@@ -78,7 +71,15 @@ services:
 volumes:
   api_logs:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs
   api_public:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./public
   mysql_data:
     driver: local
