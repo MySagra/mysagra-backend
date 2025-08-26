@@ -75,5 +75,11 @@ volumes:
       type: none
       o: bind
       device: ./logs
+  api_public:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./public
   mysql_data:
     driver: local
